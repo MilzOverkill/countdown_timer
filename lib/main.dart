@@ -92,10 +92,26 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+// the timer method
   void startTimer() {
     // use the timer variable
     timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      // adding the task inside the function
+
+      // creating an if condition - if the value is greater than zero then 
+      if(currentSecond>0){
+
+        // decrease the current second by one
+        currentSecond--;
+
+        //adding a set state so the ui gets notified
+        setState(() {});
+        
+
+      }
+
       
+
     });
   }
 }
