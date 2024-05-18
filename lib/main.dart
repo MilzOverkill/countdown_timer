@@ -43,6 +43,12 @@ class _MyHomePageState extends State<MyHomePage> {
   // variable to show the current second
   int currentSecond = 60;
 
+  //variable to check if the time is paused - it is tru cause in the default it's paused
+  bool isPaused = true;
+
+  //when timer is paused we only want to show the continue and paused button not the start button therefore
+  bool isStopped = true;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -68,26 +74,81 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
 
         // adding an elevated button to start the timer
-        ElevatedButton(
-            onPressed: () {
-              // create timer + call the method
-              startTimer();
-            },
+        isStopped
+            ? ElevatedButton(
+                onPressed: () {
+                  isPaused = false;
+                  isStopped = false;
+                  setState(() {}); // notify the UI
 
-            // we style the button here
-            style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
-                padding: EdgeInsets.symmetric(vertical: 15, horizontal: 30)),
+                  // create timer + call the method
+                  startTimer();
+                },
 
-            // text inside the button
-            child: const Text(
-              "Start",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 25,
-                fontWeight: FontWeight.w400,
-              ),
-            ))
+                // we style the button here
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                    padding:
+                        EdgeInsets.symmetric(vertical: 15, horizontal: 30)),
+
+                // text inside the button
+                child: const Text(
+                  "Start",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 25,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ))
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton(
+                      onPressed: () {
+                        // stop timer + call the method
+                        stopTimer();
+                      },
+
+                      // we style the button here
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                          padding: EdgeInsets.symmetric(
+                              vertical: 15, horizontal: 30)),
+
+                      // text inside the button
+                      child: const Text(
+                        "Stop",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 25,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      )),
+                  ElevatedButton(
+                      onPressed: () {
+                        isPaused = !isPaused; // reversing the value of pause
+                        setState(() {});
+                      },
+
+                      // we style the button here
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: isPaused
+                              ? Colors.green
+                              : Colors.orange, //change colour during pause
+                          padding: EdgeInsets.symmetric(
+                              vertical: 15, horizontal: 30)),
+
+                      // text inside the button
+                      child: Text(
+                        isPaused ? "Continue" : "Pause",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 25,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      )),
+                ],
+              )
       ],
     );
   }
@@ -98,20 +159,24 @@ class _MyHomePageState extends State<MyHomePage> {
     timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       // adding the task inside the function
 
-      // creating an if condition - if the value is greater than zero then 
-      if(currentSecond>0){
-
+      // creating an if condition - if the value is greater than zero then
+      if (currentSecond > 0 && !isPaused) {
         // decrease the current second by one
         currentSecond--;
 
         //adding a set state so the ui gets notified
         setState(() {});
-        
-
       }
-
-      
-
     });
+  }
+
+// stop timer method
+  void stopTimer() {
+    timer?.cancel(); // setting the timer = null
+    isPaused = true;
+    isStopped = true;
+    // when it's stopped it should reset to 60 again
+    currentSecond = 60;
+    setState(() {});
   }
 }
